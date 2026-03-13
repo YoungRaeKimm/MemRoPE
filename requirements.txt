@@ -1,0 +1,16 @@
+torch>=2.5.0
+torchvision
+diffusers==0.31.0
+transformers>=4.49.0
+tokenizers>=0.20.3
+accelerate>=1.1.1
+tqdm
+imageio
+imageio-ffmpeg
+av
+easydict
+ftfy
+omegaconf
+einops
+sentencepiece
+peft

@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Checkpoints and model weights
+checkpoints/
+*.pt
+*.pth
+*.safetensors
+*.bin
+
+# Outputs
+outputs/
+experiments/
+logs/
+
+# Environment
+.env
+*.tar.gz
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/

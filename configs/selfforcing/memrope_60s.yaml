@@ -1,0 +1,35 @@
+# MemRoPE + Self-Forcing — 60s (240 latent frames)
+# Cache structure: [Sink 3] + [Long-term EMA 1] + [Short-term EMA 1] + [Recent 4] + [New 3] = 12
+
+denoising_step_list:
+- 1000
+- 750
+- 500
+- 250
+warp_denoising_step: true
+num_frame_per_block: 3
+
+model_name: Wan2.1-T2V-1.3B
+model_kwargs:
+  local_attn_size: 12
+  timestep_shift: 5.0
+  sink_size: 3
+  recent_size: 4
+  use_block_rope: true
+  compression_method: ema
+  ema_alpha_long: 0.01
+  ema_alpha_short: 0.1
+
+# Inference
+data_path: prompts/moviegenbench_128_refined.txt
+output_folder: outputs/selfforcing/60s
+inference_iter: -1
+num_output_frames: 240
+use_ema: true
+seed: 0
+num_samples: 1
+save_with_index: true
+global_sink: true
+context_noise: 0
+
+generator_ckpt: checkpoints/self_forcing_dmd.pt

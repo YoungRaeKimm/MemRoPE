@@ -5,6 +5,7 @@
 # Models:
 #   1. Wan2.1-T2V-1.3B (base model)
 #   2. LongLive base + LoRA checkpoint
+#   3. Self-Forcing DMD checkpoint
 
 set -e
 
@@ -33,6 +34,20 @@ for filename in ['models/longlive_base.pt', 'models/lora.pt']:
 mv "$CKPT_DIR/models/longlive_base.pt" "$CKPT_DIR/"
 mv "$CKPT_DIR/models/lora.pt" "$CKPT_DIR/"
 rmdir "$CKPT_DIR/models" 2>/dev/null || true
+
+echo ""
+echo "=== Downloading Self-Forcing checkpoint ==="
+python -c "
+from huggingface_hub import hf_hub_download
+hf_hub_download(
+    repo_id='gdhe17/Self-Forcing',
+    filename='checkpoints/self_forcing_dmd.pt',
+    local_dir='$CKPT_DIR',
+    local_dir_use_symlinks=False
+)
+"
+mv "$CKPT_DIR/checkpoints/self_forcing_dmd.pt" "$CKPT_DIR/"
+rmdir "$CKPT_DIR/checkpoints" 2>/dev/null || true
 
 echo ""
 echo "=== All checkpoints downloaded to $CKPT_DIR/ ==="

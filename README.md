@@ -39,9 +39,10 @@ Autoregressive video diffusion models forget the past due to sliding-window KV c
 
 ## 🤖 Supported Base Models
 
-| Base Model | Checkpoint | LoRA |
-|---|---|---|
-| [LongLive](https://github.com/NVlabs/LongLive) | `longlive_base.pt` + `lora.pt` | ✅ |
+| Base Model | Checkpoint | LoRA | `use_ema` |
+|---|---|---|---|
+| [Self-Forcing](https://github.com/guandeh17/Self-Forcing) | `self_forcing_dmd.pt` | — | `true` |
+| [LongLive](https://github.com/NVlabs/LongLive) | `longlive_base.pt` + `lora.pt` | ✅ | `false` |
 
 ## 💻 Requirements
 
@@ -79,13 +80,21 @@ bash scripts/download_checkpoints.sh
 This downloads:
 - **Wan2.1-T2V-1.3B** base model
 - **LongLive** base + LoRA checkpoint
+- **Self-Forcing** DMD checkpoint
 
 ### 2. Run Inference
 
-**Single GPU (40 GB+ VRAM):**
+**With LongLive (single GPU, 40 GB+ VRAM):**
 ```bash
 python inference.py \
     --config_path configs/longlive/memrope_60s.yaml \
+    --start_idx 0 --end_idx 1
+```
+
+**With Self-Forcing (single GPU, 40 GB+ VRAM):**
+```bash
+python inference.py \
+    --config_path configs/selfforcing/memrope_60s.yaml \
     --start_idx 0 --end_idx 1
 ```
 

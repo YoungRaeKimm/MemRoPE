@@ -1,52 +1,55 @@
-<p align="center">
-  <img src="assets/memrope_logo.png" width="420">
-</p>
+![MemRoPE logo](assets/memrope_logo.png)
 
-<h2 align="center">Training-Free Infinite Video Generation<br>via Evolving Memory Tokens</h2>
+# 🧠 MemRoPE: Training-Free Infinite Video Generation via Evolving Memory Tokens
 
-<p align="center">
-  <a href="https://youngraekimm.github.io/">Youngrae Kim</a>*&nbsp;&nbsp;
-  <a href="https://scholar.google.com/citations?user=EqD5GP8AAAAJ&hl=en">Qixin Hu</a>*&nbsp;&nbsp;
-  <a href="https://mcl.usc.edu/people/cckuo/">C.-C. Jay Kuo</a>&nbsp;&nbsp;
-  <a href="https://sites.usc.edu/eessc/people/">Peter A. Beerel</a>
-  <br>
-  University of Southern California
-  <br>
-  <sub>*Equal contribution</sub>
-</p>
+[![Paper](https://img.shields.io/badge/ArXiv-Paper-brown)](https://arxiv.org/abs/xxxx.xxxxx)
+[![Code](https://img.shields.io/badge/GitHub-MemRoPE-blue)](https://github.com/YoungRaeKimm/MemRoPE)
+[![Demo](https://img.shields.io/badge/Demo-Page-brightgreen)](https://memrope.github.io)
 
-<p align="center">
-  <a href="https://memrope.github.io"><b>Project Page</b></a>
-</p>
+[Youngrae Kim](https://youngraekimm.github.io/)\* · [Qixin Hu](https://scholar.google.com/citations?user=EqD5GP8AAAAJ&hl=en)\* · [C.-C. Jay Kuo](https://mcl.usc.edu/people/cckuo/) · [Peter A. Beerel](https://sites.usc.edu/eessc/people/)
 
-> **TL;DR** &mdash; Autoregressive video diffusion models forget the past due to sliding-window KV cache eviction, causing identity drift and quality degradation over time. **MemRoPE** fixes this *without any training* by (1) compressing evicted frames into continuously evolving **Memory Tokens** via dual-rate EMA, and (2) storing keys *without* RoPE and re-applying position encoding on the fly (**Online RoPE Indexing**), so that temporal aggregation stays mathematically valid and positions never leave the trained range. The result: **up to 1-hour video generation** with a fixed-size cache and no fidelity loss.
+**University of Southern California** · *\*Equal contribution*
 
-<p align="center">
-  <img src="assets/figure4.png" width="100%">
-</p>
+## 💡 TL;DR
 
-## Highlights
+Autoregressive video diffusion models forget the past due to sliding-window KV cache eviction, causing identity drift and quality degradation over time. **MemRoPE** fixes this *without any training* by (1) compressing evicted frames into continuously evolving **Memory Tokens** via dual-rate EMA, and (2) storing keys *without* RoPE and re-applying position encoding on the fly (**Online RoPE Indexing**), so that temporal aggregation stays mathematically valid and positions never leave the trained range. The result: **up to 1-hour video generation** with a fixed-size cache and no fidelity loss.
 
-- **Memory Tokens**: Dual-rate EMA continuously compresses all past frames into long-term and short-term memory streams, maintaining both persistent identity and recent dynamics within a fixed-size cache
-- **Online RoPE Indexing**: Stores keys *without* RoPE and applies block-relative position encoding dynamically at attention time — this makes EMA aggregation mathematically well-defined and resolves positional extrapolation
-- **Training-Free**: No fine-tuning required — works as a drop-in replacement for the KV cache management
-- **Unbounded Generation**: Fixed 12-frame KV cache enables generation from 30 seconds to 1 hour+ with constant memory
+![MemRoPE method overview](assets/figure4.png)
 
-## Supported Base Models
+## TABLE OF CONTENTS
+1. [Highlights](#-highlights)
+2. [Supported Base Models](#-supported-base-models)
+3. [Requirements](#-requirements)
+4. [Installation](#-installation)
+5. [Quick Start](#-quick-start)
+6. [Method Overview](#-method-overview)
+7. [Configuration](#-configuration)
+8. [Acknowledgements](#-acknowledgements)
+9. [Citation](#-citation)
+10. [License](#-license)
+
+## ✨ Highlights
+
+- **Memory Tokens** — Dual-rate EMA continuously compresses all past frames into long-term and short-term memory streams, maintaining both persistent identity and recent dynamics within a fixed-size cache.
+- **Online RoPE Indexing** — Stores keys *without* RoPE and applies block-relative position encoding dynamically at attention time, making EMA aggregation mathematically well-defined and resolving positional extrapolation.
+- **Training-Free** — No fine-tuning required; works as a drop-in replacement for the KV cache management.
+- **Unbounded Generation** — Fixed 12-frame KV cache enables generation from 30 seconds to 1 hour+ with constant memory.
+
+## 🤖 Supported Base Models
 
 | Base Model | Checkpoint | LoRA |
 |---|---|---|
-| [LongLive](https://github.com/NVlabs/LongLive) | `longlive_base.pt` + `lora.pt` | Yes |
+| [LongLive](https://github.com/NVlabs/LongLive) | `longlive_base.pt` + `lora.pt` | ✅ |
 
-## Requirements
+## 💻 Requirements
 
-- **1-GPU mode**: NVIDIA GPU with 40GB+ VRAM (e.g., A100, A6000)
-- **2-GPU mode**: 2x NVIDIA GPUs with 24GB+ VRAM each (e.g., RTX 3090, RTX 4090, RTX A5000)
-- Python >= 3.10
-- PyTorch >= 2.5.0
-- CUDA >= 12.1
+- **1-GPU mode**: NVIDIA GPU with 40 GB+ VRAM (e.g., A100, A6000)
+- **2-GPU mode**: 2× NVIDIA GPUs with 24 GB+ VRAM each (e.g., RTX 3090 / 4090, A5000)
+- Python ≥ 3.10
+- PyTorch ≥ 2.5.0
+- CUDA ≥ 12.1
 
-## Installation
+## 📦 Installation
 
 ```bash
 # Create conda environment
@@ -63,7 +66,7 @@ pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 ```
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Download Checkpoints
 
@@ -77,23 +80,24 @@ This downloads:
 
 ### 2. Run Inference
 
-**1 GPU (40GB+ VRAM):**
+**Single GPU (40 GB+ VRAM):**
 ```bash
 python inference.py \
     --config_path configs/longlive/memrope_60s.yaml \
     --start_idx 0 --end_idx 1
 ```
 
-**2 GPUs (24GB+ each):**
+**Dual GPU (24 GB+ each):**
 ```bash
 python inference_2gpu.py \
     --config_path configs/longlive/memrope_120s.yaml \
     --start_idx 0 --end_idx 1
 ```
 
-See `scripts/` for more examples.
+> [!TIP]
+> See `scripts/` for more inference examples and batch generation scripts.
 
-## Method Overview
+## 🔬 Method Overview
 
 MemRoPE maintains a **Three-Tier Cache** with fixed size regardless of video length:
 
@@ -102,12 +106,12 @@ MemRoPE maintains a **Three-Tier Cache** with fixed size regardless of video len
       (3)                 (1+1)                       (4)              (3)
 ```
 
-- **Sink tokens**: First 3 generated frames, always preserved (attention sink)
-- **Memory Tokens**: Dual-stream EMA that continuously compresses evicted frames
-  - Long-term (α=0.01): Slowly-evolving summary of the full generation history
-  - Short-term (α=0.1): Fast-adapting summary of recent dynamics
-- **Local window**: Last 4 denoised frames (recent context)
-- **Current chunk**: 3 new frames being denoised
+| Tier | Count | Description |
+|---|---|---|
+| **Sink Tokens** | 3 | First generated frames, always preserved (attention sink) |
+| **Memory Tokens** | 1+1 | Dual-stream EMA compressing evicted frames — long-term (α=0.01) for full history, short-term (α=0.1) for recent dynamics |
+| **Local Window** | 4 | Last denoised frames providing recent context |
+| **Current Chunk** | 3 | New frames being denoised |
 
 ### Online RoPE Indexing
 
@@ -117,13 +121,13 @@ MemRoPE instead:
 1. **Stores all keys without RoPE** in the cache (position-free caching)
 2. **Applies block-relative RoPE on the fly** at each attention step with indices `[0, 1, ..., cache_size-1]` — positions never exceed the training range, and EMA aggregation stays valid
 
-## Configuration
+## ⚙️ Configuration
 
 ### Key Parameters
 
 | Parameter | Description | Default |
 |---|---|---|
-| `compression_method` | Cache compression method (`ema` or `eviction`) | `ema` |
+| `compression_method` | Cache compression method (`ema` / `eviction`) | `ema` |
 | `local_attn_size` | Total KV cache size in frames | `12` |
 | `sink_size` | Number of sink frames to preserve | `3` |
 | `recent_size` | Number of recent frames to preserve | `4` |
@@ -131,7 +135,7 @@ MemRoPE instead:
 | `ema_alpha_short` | Short-term EMA update rate | `0.1` |
 | `use_block_rope` | Enable Online RoPE Indexing | `true` |
 | `num_output_frames` | Total latent frames to generate | varies |
-| `long_video_mode` | Enable chunked VAE decode (for >60s) | `false` |
+| `long_video_mode` | Enable chunked VAE decode (for >60 s) | `false` |
 | `vae_chunk_size` | Frames per VAE decode chunk | `120` |
 | `use_ema` | Use EMA weights from checkpoint | `false` |
 
@@ -139,14 +143,14 @@ MemRoPE instead:
 
 | Duration | Latent Frames | `long_video_mode` | A6000 (measured) | H100 (estimated) |
 |---|---|---|---|---|
-| 30s | 120 | `false` | ~2 min | ~30s |
-| 60s | 240 | `false` | ~3 min | ~1 min |
-| 120s | 480 | `true` | ~6 min | ~2 min |
-| 240s | 960 | `true` | ~13 min | ~4 min |
-| 480s | 1920 | `true` | ~25 min | ~8 min |
+| 30 s | 120 | `false` | ~2 min | ~30 s |
+| 60 s | 240 | `false` | ~3 min | ~1 min |
+| 120 s | 480 | `true` | ~6 min | ~2 min |
+| 240 s | 960 | `true` | ~13 min | ~4 min |
+| 480 s | 1920 | `true` | ~25 min | ~8 min |
 | 1 hour | 14400 | `true` | ~3 hours | ~1 hour |
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 This project builds upon the following works:
 
@@ -156,7 +160,9 @@ This project builds upon the following works:
 - [**Deep Forcing**](https://github.com/cvlab-kaist/DeepForcing) — KV cache structure design inspiration
 - [**MovieGenBench**](https://ai.meta.com/research/movie-gen/) — Evaluation prompts from Meta's Movie Gen
 
-## Citation
+## 📄 Citation
+
+If you find this work useful, please consider citing:
 
 ```bibtex
 @article{memrope,
@@ -167,6 +173,6 @@ This project builds upon the following works:
 }
 ```
 
-## License
+## 📝 License
 
 This project is licensed under the [Apache License 2.0](LICENSE).

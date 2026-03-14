@@ -1,6 +1,6 @@
 ![MemRoPE logo](assets/memrope_logo.png)
 
-# 🧠 MemRoPE: Training-Free Infinite Video Generation via Evolving Memory Tokens
+# 💾 MemRoPE: Training-Free Infinite Video Generation via Evolving Memory Tokens
 
 [![Paper](https://img.shields.io/badge/ArXiv-Paper-brown)](https://arxiv.org/abs/xxxx.xxxxx)
 [![Code](https://img.shields.io/badge/GitHub-MemRoPE-blue)](https://github.com/YoungRaeKimm/MemRoPE)

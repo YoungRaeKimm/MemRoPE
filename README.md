@@ -5,6 +5,8 @@
 [![Paper](https://img.shields.io/badge/ArXiv-Paper-brown)](https://arxiv.org/abs/xxxx.xxxxx)
 [![Code](https://img.shields.io/badge/GitHub-MemRoPE-blue)](https://github.com/YoungRaeKimm/MemRoPE)
 [![Demo](https://img.shields.io/badge/Demo-Page-brightgreen)](https://memrope.github.io)
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/YoungRaeKimm/MemRoPE)
+
 
 [Youngrae Kim](https://youngraekimm.github.io/)\* · [Qixin Hu](https://scholar.google.com/citations?user=EqD5GP8AAAAJ&hl=en)\* · [C.-C. Jay Kuo](https://mcl.usc.edu/people/cckuo/) · [Peter A. Beerel](https://sites.usc.edu/eessc/people/)
 

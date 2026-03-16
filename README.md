@@ -2,7 +2,7 @@
 
 # 💾 MemRoPE: Training-Free Infinite Video Generation via Evolving Memory Tokens
 
-[![Paper](https://img.shields.io/badge/ArXiv-Paper-brown)](https://arxiv.org/abs/xxxx.xxxxx)
+[![Paper](https://img.shields.io/badge/ArXiv-Paper-brown)](https://arxiv.org/abs/2603.12513)
 [![Code](https://img.shields.io/badge/GitHub-MemRoPE-blue)](https://github.com/YoungRaeKimm/MemRoPE)
 [![Demo](https://img.shields.io/badge/Demo-Page-brightgreen)](https://memrope.github.io)
 [![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/YoungRaeKimm/MemRoPE)
@@ -176,10 +176,10 @@ This project builds upon the following works:
 If you find this work useful, please consider citing:
 
 ```bibtex
-@article{memrope,
+@article{kim2026memrope,
   title={MemRoPE: Training-Free Infinite Video Generation via Evolving Memory Tokens},
   author={Kim, Youngrae and Hu, Qixin and Kuo, C.-C. Jay and Beerel, Peter A.},
-  journal={arXiv preprint},
+  journal={arXiv preprint arXiv:2603.12513},
   year={2026}
 }
 ```

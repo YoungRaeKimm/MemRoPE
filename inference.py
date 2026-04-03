@@ -20,6 +20,11 @@ from utils.memory import get_cuda_free_memory_gb, DynamicSwapInstaller
 from utils.misc import set_seed
 
 # ---------------------------------------------------------------------------
+# Reproducibility settings (must be set before any CUDA operations)
+# ---------------------------------------------------------------------------
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
+
+# ---------------------------------------------------------------------------
 # Argument parsing
 # ---------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
@@ -66,6 +71,11 @@ else:
 
 low_memory = getattr(config, "low_memory", get_cuda_free_memory_gb(device) < 40)
 torch.set_grad_enabled(False)
+
+# For reproducibility across different hardware with the same seed
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+torch.use_deterministic_algorithms(True, warn_only=True)
 
 # ---------------------------------------------------------------------------
 # Initialize pipeline
@@ -190,10 +200,12 @@ for i, batch_data in tqdm(enumerate(dataloader), disable=(local_rank != 0)):
     else:
         prompts = [prompt] * config.num_samples
 
+    # Use CPU generator for cross-hardware reproducibility
+    generator = torch.Generator(device='cpu').manual_seed(config.seed)
     sampled_noise = torch.randn(
         [config.num_samples, config.num_output_frames, latent_channels, latent_h, latent_w],
-        device=device, dtype=torch.bfloat16,
-    )
+        generator=generator, device='cpu', dtype=torch.bfloat16,
+    ).to(device)
 
     video, latents = pipeline.inference(
         noise=sampled_noise,

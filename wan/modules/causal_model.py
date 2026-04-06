@@ -792,7 +792,8 @@ class CausalWanSelfAttention(nn.Module):
                 x = attention(
                     roped_query,
                     k_cat,
-                    v_cat
+                    v_cat,
+                    deterministic=True
                 )
             else:
                 window_start = max(0, local_end_index - self.max_attention_size)
@@ -800,7 +801,8 @@ class CausalWanSelfAttention(nn.Module):
                 x = attention(
                     roped_query,
                     roped_temp_k[:, window_start:local_end_index],
-                    temp_v_active[:, window_start:local_end_index]
+                    temp_v_active[:, window_start:local_end_index],
+                    deterministic=True
                 )
 
         # output

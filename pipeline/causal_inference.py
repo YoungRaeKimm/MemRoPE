@@ -56,6 +56,7 @@ class CausalInferencePipeline(torch.nn.Module):
         profile: bool = False,
         low_memory: bool = False,
         vae_device: torch.device = None,
+        generator: torch.Generator = None,
     ) -> torch.Tensor:
         """
         Perform inference on the given noise and text prompts.
@@ -166,9 +167,17 @@ class CausalInferencePipeline(torch.nn.Module):
                         current_start=current_start_frame * self.frame_seq_length
                     )
                     next_timestep = self.denoising_step_list[index + 1]
+                    # Use CPU generator for cross-hardware reproducibility
+                    pred_flat = denoised_pred.flatten(0, 1)
+                    if generator is not None:
+                        intermediate_noise = torch.randn(
+                            pred_flat.shape, generator=generator, device='cpu', dtype=pred_flat.dtype
+                        ).to(pred_flat.device)
+                    else:
+                        intermediate_noise = torch.randn_like(pred_flat)
                     noisy_input = self.scheduler.add_noise(
-                        denoised_pred.flatten(0, 1),
-                        torch.randn_like(denoised_pred.flatten(0, 1)),
+                        pred_flat,
+                        intermediate_noise,
                         next_timestep * torch.ones(
                             [batch_size * current_num_frames], device=noise.device, dtype=torch.long)
                     ).unflatten(0, denoised_pred.shape[:2])

@@ -7,6 +7,11 @@ import argparse
 import os
 import shutil
 
+# ---------------------------------------------------------------------------
+# Reproducibility settings (must be set before any CUDA operations)
+# ---------------------------------------------------------------------------
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
+
 import imageio
 import peft
 import torch
@@ -45,6 +50,11 @@ gpu1 = torch.device("cuda:1")
 set_seed(config.seed)
 torch.set_grad_enabled(False)
 config.distributed = False
+
+# For reproducibility across different hardware with the same seed
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+torch.use_deterministic_algorithms(True, warn_only=True)
 
 
 # ---------------------------------------------------------------------------
@@ -230,11 +240,12 @@ for i, batch_data in tqdm(enumerate(dataloader)):
     else:
         prompts = [prompt] * config.num_samples
 
-    # Noise on GPU 0 (patch_embedding device)
+    # Generate noise on CPU with generator for cross-hardware reproducibility
+    generator = torch.Generator(device='cpu').manual_seed(config.seed)
     sampled_noise = torch.randn(
         [config.num_samples, config.num_output_frames, 16, 60, 104],
-        device=gpu0, dtype=torch.bfloat16
-    )
+        generator=generator, device='cpu', dtype=torch.bfloat16
+    ).to(device=gpu0)
 
     print(f"[Prompt {idx}] {prompts[0][:80]}...")
 
@@ -258,6 +269,7 @@ for i, batch_data in tqdm(enumerate(dataloader)):
             low_memory=True,
             profile=args.profile,
             vae_device=gpu1,
+            generator=generator,
         )
 
         # Chunked VAE decode + streaming write
@@ -308,6 +320,7 @@ for i, batch_data in tqdm(enumerate(dataloader)):
                 low_memory=True,
                 profile=True,
                 vae_device=gpu1,
+                generator=generator,
             )
             continue
         video, latents = pipeline.inference(
@@ -317,6 +330,7 @@ for i, batch_data in tqdm(enumerate(dataloader)):
             low_memory=True,
             profile=False,
             vae_device=gpu1,
+            generator=generator,
         )
         current_video = rearrange(video, 'b t c h w -> b t h w c').cpu()
         video_out = 255.0 * current_video

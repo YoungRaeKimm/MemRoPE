@@ -213,6 +213,7 @@ for i, batch_data in tqdm(enumerate(dataloader), disable=(local_rank != 0)):
         return_latents=True,
         low_memory=low_memory,
         profile=False,
+        generator=generator,
     )
 
     current_video = rearrange(video, 'b t c h w -> b t h w c').cpu()

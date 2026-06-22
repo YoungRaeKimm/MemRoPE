@@ -2,6 +2,8 @@
 
 # 💾 MemRoPE: Training-Free Infinite Video Generation via Evolving Memory Tokens
 
+<h4>ECCV 2026</h4>
+
 [![Paper](https://img.shields.io/badge/ArXiv-Paper-brown)](https://arxiv.org/abs/2603.12513)
 [![Code](https://img.shields.io/badge/GitHub-MemRoPE-blue)](https://github.com/YoungRaeKimm/MemRoPE)
 [![Demo](https://img.shields.io/badge/Demo-Page-brightgreen)](https://memrope.github.io)
